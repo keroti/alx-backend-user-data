@@ -37,7 +37,7 @@ class RedactingFormatter(logging.Formatter):
         """
         Initialize class.
         """
-        super().__init__(self.FORMAT)
+        super(RedactingFormatter, self).__init__(self.FORMAT)
         self.fields = fields
 
     def format(self, record: logging.LogRecord) -> str:
@@ -45,11 +45,12 @@ class RedactingFormatter(logging.Formatter):
         Return filtered values in incoming log records
         using filter_datum.
         """
-        log_message = super().format(record)
-        for field in self.fields:
-            log_message = log_message.replace(
-                field + "=", field + "=" + self.REDACTION)
-        return log_message
+        log_message = super(RedactingFormatter, self).format(record)
+        filtered_log = filter_datum(self.fields,
+                                    self.REDACTION,
+                                    log_message,
+                                    self.SEPARATOR)
+        return filtered_log
 
 
 def get_logger() -> logging.Logger:
