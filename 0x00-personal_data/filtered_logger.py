@@ -5,6 +5,7 @@ Module for filtering log data
 
 import re
 from typing import List
+import logging
 
 
 def filter_datum(
@@ -16,3 +17,29 @@ def filter_datum(
     """
     pattern = r'({}=)[^{}]+'.format('|'.join(fields), separator)
     return re.sub(pattern, r'\1' + redaction, message)
+
+
+class RedactingFormatter(logging.Formatter):
+    """ Redacting Formatter class """
+
+    REDACTION = "***"
+    FORMAT = "[HOLBERTON] %(name)s %(levelname)s %(asctime)-15s: %(message)s"
+    SEPARATOR = ";"
+
+    def __init__(self, fields: List[str]):
+        """
+        Initialize class
+        """
+        super().__init__(self.FORMAT)
+        self.fields = fields
+
+    def format(self, record: logging.LogRecord) -> str:
+        """
+        Return filtered values in incoming log records
+        using filter_datum
+        """
+        log_message = super().format(record)
+        for field in self.fields:
+            log_message = log_message.replace(
+                field + "=", field + "=" + self.REDACTION)
+        return log_message
