@@ -21,8 +21,8 @@ def filter_datum(
     pattern = r'({}=)[^{}]+'.format('|'.join(fields), separator)
     return re.sub(pattern, r'\1' + redaction, message)
 
-
 class RedactingFormatter(logging.Formatter):
+    """ Redacting Formatter class """
 
     REDACTION = "***"
     FORMAT = "[HOLBERTON] %(name)s %(levelname)s %(asctime)-15s: %(message)s"
