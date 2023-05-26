@@ -15,8 +15,16 @@ def filter_datum(
         fields: List[str], redaction: str, message: str, separator: str
 ) -> str:
     """
-    use a regex to replace occurrences of certain field values
+    Use a regex to replace occurrences of certain field values
     and return the log message obfuscated.
+    Args:
+        fields (List[str]): List of fields to obfuscate
+        redaction (str): String representing the redacted value
+        message (str): Log line containing fields to be obfuscated
+        separator (str): Separator character used in the log line
+
+    Returns:
+        str: The obfuscated log message
     """
     pattern = r'({}=)[^{}]+'.format('|'.join(fields), separator)
     return re.sub(pattern, r'\1' + redaction, message)
