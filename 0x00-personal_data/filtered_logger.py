@@ -9,6 +9,11 @@ import logging
 import os
 import mysql.connector
 
+patterns = {
+    'extract': lambda x, y: r'(?P<field>{})=[^{}]*'.format('|'.join(x), y),
+    'replace': lambda x: r'\g<field>={}'.format(x),
+}
+
 
 def filter_datum(
         fields: List[str], redaction: str, message: str, separator: str
@@ -17,8 +22,8 @@ def filter_datum(
     use a regex to replace occurrences of certain field values
     and returns the log message obfuscated.
     """
-    pattern = r'({}=)[^{}]+'.format('|'.join(fields), separator)
-    return re.sub(pattern, r'\1' + redaction, message)
+    extract, replace = (patterns["extract"], patterns["replace"])
+    return re.sub(extract(fields, separator), replace(redaction), message)
 
 
 class RedactingFormatter(logging.Formatter):
