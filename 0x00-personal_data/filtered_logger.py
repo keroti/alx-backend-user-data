@@ -84,3 +84,26 @@ def get_db() -> mysql.connector.connection.MySQLConnection:
         password=password,
         database=database
     )
+
+
+def main() -> None:
+    """
+    obtain a database connection using get_db and retrieve all
+    rows in the users table and display each row under a filtered format
+    """
+    logger = get_logger()
+    db = get_db()
+    cursor = db.cursor()
+    cursor.execute("SELECT * FROM users")
+    rows = cursor.fetchall()
+
+    logger.info("Filtered fields:\n%s", "\n".join(PII_FIELDS))
+
+    for row in rows:
+        log_message = "; ".join(
+            [f"{field}={str(value)}" for field,
+             value in zip(cursor.column_names, row)])
+        logger.info(log_message)
+
+    cursor.close()
+    db.close()
