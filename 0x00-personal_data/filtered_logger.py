@@ -11,7 +11,9 @@ import mysql.connector
 from typing import List
 
 
-def filter_datum(fields: List[str], redaction: str, message: str, separator: str) -> str:
+def filter_datum(
+        fields: List[str], redaction: str, message: str, separator: str
+) -> str:
     """
     use a regex to replace occurrences of certain field values
     and return the log message obfuscated.
@@ -34,7 +36,8 @@ class RedactingFormatter(logging.Formatter):
     def format(self, record: logging.LogRecord) -> str:
         log_message = super().format(record)
         for field in self.fields:
-            log_message = log_message.replace(field + "=", field + "=" + self.REDACTION)
+            log_message = log_message.replace(
+                field + "=", field + "=" + self.REDACTION)
         return log_message
 
 
@@ -71,7 +74,7 @@ def get_db() -> mysql.connector.connection.MySQLConnection:
     password = os.environ.get("PERSONAL_DATA_DB_PASSWORD", "")
     host = os.environ.get("PERSONAL_DATA_DB_HOST", "localhost")
     database = os.environ.get("PERSONAL_DATA_DB_NAME")
-    
+
     return mysql.connector.connect(
         host=host,
         user=username,
@@ -93,7 +96,9 @@ def main() -> None:
     logger.info("Filtered fields:\n%s", "\n".join(PII_FIELDS))
 
     for row in rows:
-        log_message = "; ".join([f"{field}={str(value)}" for field, value in zip(cursor.column_names, row)])
+        log_message = "; ".join(
+            [f"{field}={str(value)}" for field,
+             value in zip(cursor.column_names, row)])
         logger.info(log_message)
 
     cursor.close()
