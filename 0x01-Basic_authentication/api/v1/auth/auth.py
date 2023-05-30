@@ -20,7 +20,7 @@ class Auth:
         if path is None:
             return True
         if excluded_paths is None or len(excluded_paths) == 0:
-            return False
+            return True
         if path.endswith('/') and path[:-1] in excluded_paths:
             return False
         return path not in excluded_paths
