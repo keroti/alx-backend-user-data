@@ -7,6 +7,7 @@ from api.v1.views import app_views
 from flask import Flask, jsonify, abort, request
 from flask_cors import (CORS, cross_origin)
 import os
+from werkzeug.exceptions import HTTPException
 
 
 app = Flask(__name__)
@@ -19,6 +20,13 @@ def not_found(error) -> str:
     """ Not found handler
     """
     return jsonify({"error": "Not found"}), 404
+
+
+@app.errorhandler(HTTPException)
+def handle_exception(e):
+    if e.code == 401:
+        return jsonify(error="Unauthorized"), 401
+    return jsonify(error=str(e)), e.code
 
 
 if __name__ == "__main__":
