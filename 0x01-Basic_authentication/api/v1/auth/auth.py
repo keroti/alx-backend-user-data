@@ -20,14 +20,10 @@ class Auth:
         """
         if path is not None and excluded_paths is not None:
             for exclusion_path in map(lambda x: x.strip(), excluded_paths):
-                pattern = ''
-                if exclusion_path[-1] == '*':
-                    pattern = '{}.*'.format(exclusion_path[0:-1])
-                elif exclusion_path[-1] == '/':
-                    pattern = '{}/*'.format(exclusion_path[0:-1])
-                else:
-                    pattern = '{}/*'.format(exclusion_path)
-                if re.match(pattern, path):
+                if exclusion_path.endswith('*'):
+                    if path.startswith(exclusion_path[:-1]):
+                        return False
+                elif re.match(exclusion_path, path):
                     return False
         return True
 
