@@ -6,6 +6,7 @@ from flask import Flask, jsonify, request
 from auth import Auth
 
 app = Flask(__name__)
+AUTH = Auth()
 
 
 @app.route("/")
@@ -18,11 +19,14 @@ def welcome():
 
 @app.route("/users", methods=["POST"])
 def register_user():
+    """
+    Implement endpoint to register user
+    """
     email = request.form.get("email")
     password = request.form.get("password")
 
     try:
-        user = Auth.register_user(email, password)
+        user = AUTH.register_user(email, password)
         return jsonify({"email": user.email, "message": "user created"})
     except ValueError as err:
         return jsonify({"message": str(err)}), 400
