@@ -47,10 +47,11 @@ class DB:
         and return The first User object that matches the
         filtering conditions or raise error
         """
-        try:
-            user = self._session.query(User).filter_by(**kwargs).first()
-            if user is None:
-                raise NoResultFound
-            return user
-        except Exception as e:
-            raise InvalidRequestError(str(e))
+        users = self._session.query(User)
+        for i, j in kwargs.items():
+            if i not in User.__dict__:
+                raise InvalidRequestError
+            for usr in users:
+                if getattr(usr, i) == j:
+                    return usr
+        raise NoResultFound
