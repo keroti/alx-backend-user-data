@@ -2,10 +2,10 @@
 """
 Hash password module
 """
-import bcrypt
 from db import DB
 from user import User
 from sqlalchemy.exc import NoResultFound
+from bcrypt import hashpw, gensalt, checkpw
 
 
 def _hash_password(password: str) -> bytes:
@@ -37,3 +37,12 @@ class Auth:
             hashed_password = _hash_password(password)
             user = self._db.add_user(email, hashed_password)
             return user
+
+    def valid_login(self, email: str, password: str) -> bool:
+        """Validates user credentials."""
+        user = self._db.find_user_by(email=email)
+        if user:
+            hashed_password = user.hashed_password.encode('utf-8')
+            entered_password = password.encode('utf-8')
+            return checkpw(entered_password, hashed_password)
+        return False
