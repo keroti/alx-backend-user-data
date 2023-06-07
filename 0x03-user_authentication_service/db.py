@@ -3,8 +3,9 @@
 """
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
-from sqlalchemy.orm.exc import NoResultFound
+from sqlalchemy.orm.session import Session
 from sqlalchemy.exc import InvalidRequestError
+from sqlalchemy.orm.exc import NoResultFound
 
 
 from user import Base, User
@@ -55,3 +56,19 @@ class DB:
                 if getattr(usr, i) == j:
                     return usr
         raise NoResultFound
+    
+    def update_user(self, user_id: int, **kwargs) -> None:
+        """
+        Update a user's attributes and
+        raise ValueError if an invalid attribute is passed
+        """
+        try:
+            user = self.find_user_by(id=user_id)
+            for attr, value in kwargs.items():
+                if hasattr(user, attr):
+                    setattr(user, attr, value)
+                else:
+                    raise ValueError(f"Invalid attribute: {attr}")
+            self._session.commit()
+        except NoResultFound:
+            raise ValueError("User not found")
