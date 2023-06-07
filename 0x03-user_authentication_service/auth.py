@@ -1,12 +1,12 @@
 #!/usr/bin/env python3
 """
-Hash password module
+Auth module
 """
 import bcrypt
 from db import DB
 from user import User
 from sqlalchemy.exc import NoResultFound
-import uuid
+from uuid import uuid4
 
 
 def _hash_password(password: str) -> bytes:
@@ -18,9 +18,9 @@ def _hash_password(password: str) -> bytes:
     return hashed_password
 
 
-def _generate_uuid():
+def _generate_uuid() -> str:
     """Generate a new UUID and return its string representation."""
-    return str(uuid.uuid4())
+    return str(uuid4())
 
 
 class Auth:
