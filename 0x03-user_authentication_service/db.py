@@ -56,7 +56,7 @@ class DB:
                 if getattr(usr, i) == j:
                     return usr
         raise NoResultFound
-    
+
     def update_user(self, user_id: int, **kwargs) -> None:
         """
         Update a user's attributes and
