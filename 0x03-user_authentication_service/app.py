@@ -2,7 +2,8 @@
 """
 Flask app module
 """
-from flask import Flask, jsonify
+from flask import Flask, jsonify, request
+from auth import Auth
 
 app = Flask(__name__)
 
@@ -13,6 +14,18 @@ def welcome():
     Return a welcome message
     """
     return jsonify({"message": "Bienvenue"})
+
+
+@app.route("/users", methods=["POST"])
+def register_user():
+    email = request.form.get("email")
+    password = request.form.get("password")
+
+    try:
+        user = Auth.register_user(email, password)
+        return jsonify({"email": user.email, "message": "user created"})
+    except ValueError as err:
+        return jsonify({"message": str(err)}), 400
 
 
 if __name__ == "__main__":
