@@ -3,6 +3,9 @@
 """
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
+from sqlalchemy.orm.exc import NoResultFound
+from sqlalchemy.exc import InvalidRequestError
+
 
 from user import Base, User
 
@@ -37,3 +40,17 @@ class DB:
         self._session.add(user)
         self._session.commit()
         return user
+    
+    def find_user_by(self, **kwargs) -> User:
+        """
+        Find a user in the database based on the provided keyword args
+        and return The first User object that matches the
+        filtering conditions or raise error
+        """
+        try:
+            user = self._session.query(User).filter_by(**kwargs).first()
+            if user is None:
+                raise NoResultFound
+            return user
+        except Exception as e:
+            raise InvalidRequestError(str(e))
