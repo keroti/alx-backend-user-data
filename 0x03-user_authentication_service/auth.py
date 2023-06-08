@@ -7,6 +7,7 @@ from db import DB
 from user import User
 from sqlalchemy.exc import NoResultFound
 import uuid
+from typing import Union
 
 
 def _hash_password(password: str) -> bytes:
@@ -83,3 +84,15 @@ class Auth:
     def destroy_session(self, user_id: int) -> None:
         """Destroy session"""
         self._db.update_user_session_id(user_id, None)
+
+    def get_reset_password_token(self, email: str) -> str:
+        """Generate reset password token"""
+        user = self._db.find_user_by(email=email)
+
+        if not user:
+            raise ValueError("User not found.")
+
+        token = str(uuid.uuid4())
+        self._db.update_user(user.id, reset_token=token)
+
+        return token
